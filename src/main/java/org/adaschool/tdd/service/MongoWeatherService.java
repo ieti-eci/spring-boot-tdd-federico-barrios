@@ -8,6 +8,7 @@ import org.adaschool.tdd.repository.document.WeatherReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,7 +42,15 @@ public class MongoWeatherService
     @Override
     public List<WeatherReport> findNearLocation( GeoLocation geoLocation, float distanceRangeInMeters )
     {
-        return null;
+        List<WeatherReport> reports = repository.findAll();
+        List<WeatherReport> nearReports = new ArrayList<>();
+        for (WeatherReport report : reports) {
+            if (distanceRangeInMeters >= report.getGeoLocation().getDistanceFromLatLngInKm(geoLocation)) {
+                nearReports.add(report);
+            }
+        }
+
+        return nearReports;
     }
 
     @Override

@@ -14,8 +14,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -70,4 +69,22 @@ class MongoWeatherServiceTest
         } );
     }
 
+    @Test
+    void weatherServiceReportNearLocationFoundTest()
+    {
+        GeoLocation testLocation = new GeoLocation(42.10053427872699, 1.8439118491438102);
+
+        long distanceInKm = 15;
+
+        WeatherReport nearReport =
+                new WeatherReport(new GeoLocation(42.1, 1.8), 13f, 13f, "Federico", new Date());
+
+        List<WeatherReport> findAllResult = Collections.singletonList(nearReport);
+
+        when(repository.findAll()).thenReturn(new ArrayList<>(findAllResult));
+
+        List<WeatherReport> result = weatherService.findNearLocation(testLocation, distanceInKm);
+
+        Assertions.assertArrayEquals(new WeatherReport[]{nearReport}, result.toArray());
+    }
 }
